@@ -1,4 +1,4 @@
-package com.example.BankingSystem.dao;
+package com.example.BankingSystem.model;
 
 import com.example.BankingSystem.enums.Status;
 import lombok.AllArgsConstructor;
@@ -33,9 +33,14 @@ public class Savings {
 
     @DecimalMin(value = "100")
     @DecimalMax(value = "1000")
-    private BigDecimal minimumBalance = new BigDecimal("1000");
+    private BigDecimal minimumBalance = new BigDecimal("2000");
 
-    private BigDecimal penaltyFee = new BigDecimal("40");
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride( name = "currency", column = @Column(name = "penalty_fee_currency")),
+            @AttributeOverride( name = "amount", column = @Column(name = "penalty_fee_amount"))
+    })
+    private Money penaltyFee = new Money(new BigDecimal("40"));
     private LocalDate creationDate;
 
     @Enumerated(EnumType.STRING)

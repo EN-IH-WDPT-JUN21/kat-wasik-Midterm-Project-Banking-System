@@ -1,7 +1,6 @@
-package com.example.BankingSystem.dao;
+package com.example.BankingSystem.model;
 
 import com.example.BankingSystem.enums.Status;
-import com.example.BankingSystem.util.Money;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

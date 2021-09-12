@@ -1,6 +1,6 @@
 package com.example.BankingSystem.repository;
 
-import com.example.BankingSystem.dao.Admin;
+import com.example.BankingSystem.model.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

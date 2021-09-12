@@ -1,4 +1,4 @@
-package com.example.BankingSystem.dao;
+package com.example.BankingSystem.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.example.BankingSystem.dao;
+package com.example.BankingSystem.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -20,8 +21,22 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     private String street;
+
+    @NotNull
     private String city;
+
+    @NotNull
     private String postalCode;
+
+    @NotNull
     private String country;
+
+    public Address(String street, String city, String postalCode, String country) {
+        this.street = street;
+        this.city = city;
+        this.postalCode = postalCode;
+        this.country = country;
+    }
 }

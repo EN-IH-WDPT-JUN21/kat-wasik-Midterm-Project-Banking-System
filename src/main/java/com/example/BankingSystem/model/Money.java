@@ -1,5 +1,6 @@
-package com.example.BankingSystem.util;
+package com.example.BankingSystem.model;
 
+import javax.persistence.Embeddable;
 import java.math.RoundingMode;
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -7,6 +8,7 @@ import java.util.Currency;
 /**
  * source: https://gist.githubusercontent.com/GazzD/a2d8a92ac0b46858070d08bbc4cc4f40/raw/eaf48efd7c191ba1c518f93484e9ce9b6d79e653/Money.java
  */
+@Embeddable
 public class Money {
 
     private static final Currency USD = Currency.getInstance("USD");
