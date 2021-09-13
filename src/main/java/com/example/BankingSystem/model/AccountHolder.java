@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -19,14 +20,10 @@ public class AccountHolder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
     private String name;
-
-    @NotNull
     private LocalDate dateOfBirth;
 
     @OneToOne
-    @NotNull
     private Address primaryAddress;
 
     @OneToOne
@@ -44,5 +41,18 @@ public class AccountHolder {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountHolder that = (AccountHolder) o;
+        return getName().equals(that.getName()) && getDateOfBirth().equals(that.getDateOfBirth()) && getPrimaryAddress().equals(that.getPrimaryAddress()) && Objects.equals(getMailingAddress(), that.getMailingAddress());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getDateOfBirth(), getPrimaryAddress(), getMailingAddress());
     }
 }

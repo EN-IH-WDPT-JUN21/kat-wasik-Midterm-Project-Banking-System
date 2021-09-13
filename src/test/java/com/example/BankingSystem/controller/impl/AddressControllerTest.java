@@ -4,18 +4,14 @@ import com.example.BankingSystem.controller.dto.AddressDTO;
 import com.example.BankingSystem.model.Address;
 import com.example.BankingSystem.repository.AddressRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,10 +42,10 @@ class AddressControllerTest {
         address2 = addressRepository.save(new Address("3715 Beechwood Drive", "Laurel", "20707", "United States"));
     }
 
-    @AfterEach
-    void tearDown() {
-        addressRepository.deleteAll();
-    }
+//    @AfterEach
+//    void tearDown() {
+//        addressRepository.deleteAll();
+//    }
 
     @Test
     void addNewAddress_Valid_Created() throws Exception {
