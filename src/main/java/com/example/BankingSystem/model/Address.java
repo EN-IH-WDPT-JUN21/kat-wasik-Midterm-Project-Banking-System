@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -20,17 +21,9 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @NotNull
     private String street;
-
-    @NotNull
     private String city;
-
-    @NotNull
     private String postalCode;
-
-    @NotNull
     private String country;
 
     public Address(String street, String city, String postalCode, String country) {
@@ -38,5 +31,18 @@ public class Address {
         this.city = city;
         this.postalCode = postalCode;
         this.country = country;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return getStreet().equals(address.getStreet()) && getCity().equals(address.getCity()) && getPostalCode().equals(address.getPostalCode()) && getCountry().equals(address.getCountry());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getStreet(), getCity(), getPostalCode(), getCountry());
     }
 }

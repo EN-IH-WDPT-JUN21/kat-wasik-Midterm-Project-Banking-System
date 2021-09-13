@@ -1,5 +1,6 @@
 package com.example.BankingSystem.controller.impl;
 
+import com.example.BankingSystem.controller.dto.AddressDTO;
 import com.example.BankingSystem.model.Address;
 import com.example.BankingSystem.repository.AddressRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,10 +18,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -43,7 +42,7 @@ class AddressControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        address1 = addressRepository.save(new Address("Ctra. Villena 121", "Paredes de Nava", " 34300", "Spain"));
+        address1 = addressRepository.save(new Address("Ct. Villena 121", "Paredes de Nava", " 34300", "Spain"));
         address2 = addressRepository.save(new Address("3715 Beechwood Drive", "Laurel", "20707", "United States"));
     }
 
@@ -53,9 +52,23 @@ class AddressControllerTest {
     }
 
     @Test
+    void addNewAddress_Valid_Created() throws Exception {
+        AddressDTO addressDTO = new AddressDTO("Ansbacher Strasse 50", "Niederweiler", "55491", "Germany");
+
+        String body = objectMapper.writeValueAsString(addressDTO);
+
+        MvcResult mvcResult = mockMvc
+                .perform(post("/address").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Niederweiler"));
+    }
+
+    @Test
     void getAll_Valid_Found() throws Exception {
         MvcResult mvcResult = mockMvc
-                .perform(get("/address/all"))
+                .perform(get("/address"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -65,12 +78,8 @@ class AddressControllerTest {
 
     @Test
     void getById_Valid_Found() throws Exception {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
-        params.add("id", Integer.toString(address1.getId()));
-
         MvcResult mvcResult = mockMvc
-                .perform(get("/address").queryParams(params))
+                .perform(get("/address/" + address1.getId()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -79,16 +88,35 @@ class AddressControllerTest {
     }
 
     @Test
-    void addNewAddress_Valid_Created() throws Exception {
-        Address address3 = new Address("Ansbacher Strasse 50", "Niederweiler", "55491", "Germany");
+    void updateAddress_Valid_Updated() throws Exception {
+        AddressDTO addressDTO = new AddressDTO("Ansbacher Strasse 50", "Niederweiler", "55491", "Germany");
 
-        String body = objectMapper.writeValueAsString(address3);
+        String body = objectMapper.writeValueAsString(addressDTO);
+
+        Integer id = address1.getId();
 
         MvcResult mvcResult = mockMvc
-                .perform(post("/address").content(body).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
+                .perform(put("/address/" + id).content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
                 .andReturn();
 
-        assertTrue(addressRepository.exists(Example.of(address3)));
+        Address address = addressRepository.findById(id).get();
+        assertEquals("Ansbacher Strasse 50", address.getStreet());
+        assertEquals("Niederweiler", address.getCity());
+        assertEquals("55491", address.getPostalCode());
+        assertEquals("Germany", address.getCountry());
+    }
+
+    @Test
+    void deleteAddress_Valid_Deleted() throws Exception {
+        Integer id = address1.getId();
+
+        MvcResult mvcResult = mockMvc
+                .perform(delete("/address/" + id))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertTrue(addressRepository.findAll().contains(address2));
+        assertFalse(addressRepository.findAll().contains(address1));
     }
 }
