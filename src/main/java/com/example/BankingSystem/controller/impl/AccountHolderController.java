@@ -7,12 +7,11 @@ import com.example.BankingSystem.repository.AccountHolderRepository;
 import com.example.BankingSystem.service.interfaces.IAccountHolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AccountHolderController implements IAccountHolderController {
@@ -30,8 +29,24 @@ public class AccountHolderController implements IAccountHolderController {
     }
 
     // READ
+    @GetMapping("/accountholder")
+    public List<AccountHolder> getAll() {
+        return accountHolderRepository.findAll();
+    }
+
+    @GetMapping("/accountholder/{id}")
+    public AccountHolder getById(@PathVariable Integer id) {
+        Optional<AccountHolder> accountHolderOptional = accountHolderRepository.findById(id);
+
+        return accountHolderOptional.isPresent() ? accountHolderOptional.get() : null;
+    }
 
     // UPDATE
 
+
     // DELETE
+    @DeleteMapping("/accountholder/{id}")
+    public void delete(@PathVariable Integer id) {
+        accountHolderRepository.deleteById(id);
+    }
 }

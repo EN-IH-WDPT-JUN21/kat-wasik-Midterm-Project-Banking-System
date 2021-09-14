@@ -38,17 +38,23 @@ class AccountHolderRepositoryTest {
     }
 
     @Test
-    void saveAccountHolder_successful() {
+    void saveAccountHolder_Successful() {
         assertEquals(1, accountHolderRepository.findAll().size());
         AccountHolder accountHolder2 = accountHolderRepository.save(new AccountHolder("Julie Wilson", LocalDate.of(2002, 1, 23), address1, address2));
         assertEquals(2, accountHolderRepository.findAll().size());
     }
 
     @Test
-    void saveAccountHolder_noMailingAddress_successful() {
+    void saveAccountHolder_noMailingAddress_Successful() {
         assertEquals(1, accountHolderRepository.findAll().size());
         AccountHolder accountHolder2 = accountHolderRepository.save(new AccountHolder("Julie Wilson", LocalDate.of(2002, 1, 23), address1));
         assertEquals(2, accountHolderRepository.findAll().size());
         assertNull(accountHolder2.getMailingAddress());
+    }
+
+    @Test
+    void findByName_Valid_Succesful() {
+        AccountHolder foundAccountHolder = accountHolderRepository.findByName("Marisabel Almaraz").get();
+        assertEquals(accountHolder1, foundAccountHolder);
     }
 }

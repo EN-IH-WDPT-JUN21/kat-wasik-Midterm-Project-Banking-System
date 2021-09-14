@@ -36,9 +36,9 @@ public class AddressController implements IAddressController {
 
     @GetMapping("/address/{id}")
     public Address getById(@PathVariable Integer id) {
-        Optional<Address> optionalAddress = addressRepository.findById(id);
+        Optional<Address> addressOptional = addressRepository.findById(id);
 
-        return optionalAddress.isPresent() ? optionalAddress.get() : null;
+        return addressOptional.isPresent() ? addressOptional.get() : null;
     }
 
     // UPDATE

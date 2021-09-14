@@ -4,6 +4,7 @@ import com.example.BankingSystem.controller.dto.AddressDTO;
 import com.example.BankingSystem.model.Address;
 import com.example.BankingSystem.repository.AddressRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 class AddressControllerTest {
-
     @Autowired
     WebApplicationContext webApplicationContext;
 
@@ -42,10 +42,10 @@ class AddressControllerTest {
         address2 = addressRepository.save(new Address("3715 Beechwood Drive", "Laurel", "20707", "United States"));
     }
 
-//    @AfterEach
-//    void tearDown() {
-//        addressRepository.deleteAll();
-//    }
+    @AfterEach
+    void tearDown() {
+        addressRepository.deleteAll();
+    }
 
     @Test
     void addNewAddress_Valid_Created() throws Exception {
@@ -101,6 +101,20 @@ class AddressControllerTest {
         assertEquals("Niederweiler", address.getCity());
         assertEquals("55491", address.getPostalCode());
         assertEquals("Germany", address.getCountry());
+    }
+
+    @Test
+    void updateAddress_NullValue_BadRequest() throws Exception {
+        AddressDTO addressDTO = new AddressDTO(null, "Niederweiler", "55491", "Germany");
+
+        String body = objectMapper.writeValueAsString(addressDTO);
+
+        Integer id = address1.getId();
+
+        MvcResult mvcResult = mockMvc
+                .perform(put("/address/" + id).content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
     }
 
     @Test
