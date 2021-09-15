@@ -17,6 +17,7 @@ public class Checking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+
     private BigDecimal balance;
     private String secretKey;
 

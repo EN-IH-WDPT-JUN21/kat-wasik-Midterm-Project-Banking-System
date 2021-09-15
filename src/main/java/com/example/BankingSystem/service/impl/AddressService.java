@@ -27,26 +27,17 @@ public class AddressService implements IAddressService {
         }
     }
 
-    public void update(Integer id, AddressDTO addressDTO){
+    public void update(Integer id, AddressDTO addressDTO) {
 
         Optional<Address> storedAddress = addressRepository.findById(id);
 
-        if (storedAddress.isPresent()){
-            if (addressDTO.getStreet() != null) {
-                    storedAddress.get().setStreet(addressDTO.getStreet());
-            }
-            if (addressDTO.getCity() != null) {
-                storedAddress.get().setCity(addressDTO.getCity());
-            }
-            if (addressDTO.getPostalCode() != null) {
-                storedAddress.get().setPostalCode(addressDTO.getPostalCode());
-            }
-            if (addressDTO.getCountry() != null) {
-                storedAddress.get().setCountry(addressDTO.getCountry());
-            }
+        if (storedAddress.isPresent()) {
+            storedAddress.get().setStreet(addressDTO.getStreet());
+            storedAddress.get().setCity(addressDTO.getCity());
+            storedAddress.get().setPostalCode(addressDTO.getPostalCode());
+            storedAddress.get().setCountry(addressDTO.getCountry());
             addressRepository.save(storedAddress.get());
-        }
-        else {
+        } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This Address doesn't exist");
         }
     }

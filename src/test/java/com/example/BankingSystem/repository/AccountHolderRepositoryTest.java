@@ -47,7 +47,13 @@ class AccountHolderRepositoryTest {
     @Test
     void saveAccountHolder_noMailingAddress_Successful() {
         assertEquals(1, accountHolderRepository.findAll().size());
-        AccountHolder accountHolder2 = accountHolderRepository.save(new AccountHolder("Julie Wilson", LocalDate.of(2002, 1, 23), address1));
+
+        AccountHolder accountHolder2 = new AccountHolder();
+        accountHolder2.setName("Julie Wilson");
+        accountHolder2.setDateOfBirth(LocalDate.of(2002, 1, 23));
+        accountHolder2.setPrimaryAddress(address1);
+        accountHolderRepository.save(accountHolder2);
+
         assertEquals(2, accountHolderRepository.findAll().size());
         assertNull(accountHolder2.getMailingAddress());
     }

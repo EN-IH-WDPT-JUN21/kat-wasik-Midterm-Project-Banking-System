@@ -157,7 +157,11 @@ class AccountHolderControllerTest {
 
     @Test
     void addNewAccountHolder_AccountAlreadyExists_BadRequest() throws Exception {
-        accountHolderRepository.save(new AccountHolder("John Smith", LocalDate.parse("1945-09-23"), address1));
+        AccountHolder existingAccountHolder = new AccountHolder();
+        existingAccountHolder.setName("John Smith");
+        existingAccountHolder.setDateOfBirth(LocalDate.of(1945, 9, 23));
+        existingAccountHolder.setPrimaryAddress(address1);
+        accountHolderRepository.save(existingAccountHolder);
 
         AccountHolderDTO accountHolderDTO = new AccountHolderDTO();
         accountHolderDTO.setName("John Smith");

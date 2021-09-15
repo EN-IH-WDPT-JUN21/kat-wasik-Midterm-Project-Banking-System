@@ -36,8 +36,15 @@ class CheckingRepositoryTest {
     void setUp() {
         address1 = addressRepository.save(new Address("Ctra. Villena 121", "Paredes de Nava", "34300", "Spain"));
         address2 = addressRepository.save(new Address("3715 Beechwood Drive", "Laurel", "20707", "United States"));
+
         accountHolder1 = accountHolderRepository.save(new AccountHolder("Marisabel Almaraz", LocalDate.of(1971, 12, 12), address1, address1));
-        accountHolder2 = accountHolderRepository.save(new AccountHolder("Julie Wilson", LocalDate.of(2002, 1, 23), address1));
+
+        accountHolder2 = new AccountHolder();
+        accountHolder2.setName("Julie Wilson");
+        accountHolder2.setDateOfBirth(LocalDate.of(2002, 1, 23));
+        accountHolder2.setPrimaryAddress(address1);
+        accountHolderRepository.save(accountHolder2);
+
         checking1 = checkingRepository.save(new Checking(new BigDecimal("0"), "(almSnow49", accountHolder1, accountHolder2, new BigDecimal("250"), new BigDecimal("40"), new BigDecimal("12"), Status.ACTIVE));
     }
 
