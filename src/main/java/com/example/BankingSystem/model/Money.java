@@ -1,9 +1,14 @@
 package com.example.BankingSystem.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import java.math.RoundingMode;
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Objects;
 
 /**
  * source: https://gist.githubusercontent.com/GazzD/a2d8a92ac0b46858070d08bbc4cc4f40/raw/eaf48efd7c191ba1c518f93484e9ce9b6d79e653/Money.java
@@ -40,6 +45,13 @@ public class Money {
         this(amount, USD, DEFAULT_ROUNDING);
     }
 
+    /**
+     * Class constructor with nor arguments, defaults amount to 0. Uses default RoundingMode HALF_EVEN and default currency USD.
+     **/
+    public Money() {
+        this(new BigDecimal("0"), USD, DEFAULT_ROUNDING);
+    }
+
     public BigDecimal increaseAmount(Money money) {
         setAmount(this.amount.add(money.amount));
         return this.amount;
@@ -74,5 +86,18 @@ public class Money {
 
     public String toString() {
         return getCurrency().getSymbol() + " " + getAmount();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Money money = (Money) o;
+        return getCurrency().equals(money.getCurrency()) && getAmount().equals(money.getAmount());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCurrency(), getAmount());
     }
 }

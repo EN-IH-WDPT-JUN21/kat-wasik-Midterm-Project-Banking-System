@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -71,5 +72,18 @@ public class Checking {
         this.secretKey = secretKey;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Checking checking = (Checking) o;
+        return getSecretKey().equals(checking.getSecretKey()) && getPrimaryOwner().equals(checking.getPrimaryOwner()) && Objects.equals(getSecondaryOwner(), checking.getSecondaryOwner());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSecretKey(), getPrimaryOwner(), getSecondaryOwner());
     }
 }

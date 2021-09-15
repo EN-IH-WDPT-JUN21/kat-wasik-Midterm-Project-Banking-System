@@ -16,6 +16,7 @@ public class AccountHolderDTO {
     @NotEmpty(message = "Name can't be empty or null.")
     private String name;
 
+    @NotEmpty(message = "Date of birth can't empty or null")
     @Pattern(regexp = "^((19|2[0-9])[0-9]{2})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$", message = "Expected date format: YYYY-MM-DD")
     private String dateOfBirth;
 

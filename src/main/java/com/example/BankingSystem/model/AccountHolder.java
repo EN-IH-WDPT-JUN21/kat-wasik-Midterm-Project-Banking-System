@@ -36,6 +36,12 @@ public class AccountHolder {
         this.mailingAddress = mailingAddress;
     }
 
+    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress) {
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.primaryAddress = primaryAddress;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
