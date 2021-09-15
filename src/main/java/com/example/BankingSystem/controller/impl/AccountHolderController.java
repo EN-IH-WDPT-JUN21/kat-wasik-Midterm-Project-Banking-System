@@ -42,7 +42,11 @@ public class AccountHolderController implements IAccountHolderController {
     }
 
     // UPDATE
-
+    @PutMapping("/accountholder/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable Integer id, @RequestBody @Valid AccountHolderDTO accountHolderDTO) {
+        accountHolderService.update(id, accountHolderDTO);
+    }
 
     // DELETE
     @DeleteMapping("/accountholder/{id}")

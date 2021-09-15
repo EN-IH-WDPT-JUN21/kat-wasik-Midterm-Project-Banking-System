@@ -23,10 +23,10 @@ public class AccountHolder {
     private String name;
     private LocalDate dateOfBirth;
 
-    @OneToOne
+    @ManyToOne
     private Address primaryAddress;
 
-    @OneToOne
+    @ManyToOne
     private Address mailingAddress; // optional
 
     public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {

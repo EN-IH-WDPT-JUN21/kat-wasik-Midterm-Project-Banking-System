@@ -4,5 +4,6 @@ import com.example.BankingSystem.controller.dto.AccountHolderDTO;
 import com.example.BankingSystem.model.AccountHolder;
 
 public interface IAccountHolderService {
-    public AccountHolder store(AccountHolderDTO accountHolderDTO);
+    AccountHolder store(AccountHolderDTO accountHolderDTO);
+    void update(Integer id, AccountHolderDTO accountHolderDTO);
 }

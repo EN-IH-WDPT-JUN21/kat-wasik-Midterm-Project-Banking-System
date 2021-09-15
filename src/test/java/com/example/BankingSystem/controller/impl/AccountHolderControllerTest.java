@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,6 +55,7 @@ class AccountHolderControllerTest {
     @AfterEach
     void tearDown() {
         accountHolderRepository.deleteAll();
+        addressRepository.deleteAll();
     }
 
     @Test
@@ -174,5 +176,49 @@ class AccountHolderControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(status().reason(containsString("This account holder already exists in the system.")))
                 .andReturn();
+    }
+
+    @Test
+    void updateAccountHolder_DoesNotExist_BadRequest() throws Exception {
+        AccountHolderDTO accountHolderDTO = new AccountHolderDTO();
+        accountHolderDTO.setName("John Smith");
+        accountHolderDTO.setDateOfBirth("1945-09-23");
+        accountHolderDTO.setPrimaryAddressId("1");
+
+        String body = objectMapper.writeValueAsString(accountHolderDTO);
+
+        MvcResult mvcResult = mockMvc.perform(put("/accountholder/99").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(containsString("Account Holder with id 99 does not exist.")))
+                .andReturn();
+    }
+
+    @Test
+    void updateAccountHolder_Valid_Updated() throws Exception {
+        AccountHolder existingAccountHolder = new AccountHolder();
+        existingAccountHolder.setName("John Smith");
+        existingAccountHolder.setDateOfBirth(LocalDate.of(1945, 9, 23));
+        existingAccountHolder.setPrimaryAddress(address1);
+        existingAccountHolder.setMailingAddress(address2);
+        accountHolderRepository.save(existingAccountHolder);
+
+        AccountHolderDTO accountHolderDTO = new AccountHolderDTO();
+        accountHolderDTO.setName("Mary Poppins");
+        accountHolderDTO.setDateOfBirth("1995-01-12");
+        accountHolderDTO.setPrimaryAddressId("2");
+        accountHolderDTO.setMailingAddressId("1");
+
+        String body = objectMapper.writeValueAsString(accountHolderDTO);
+
+        MvcResult mvcResult = mockMvc.perform(put("/accountholder/1").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        AccountHolder updatedAccountHolder = accountHolderRepository.findById(1).get();
+
+        assertEquals("Mary Poppins", updatedAccountHolder.getName());
+        assertEquals(LocalDate.of(1995, 1, 12), updatedAccountHolder.getDateOfBirth());
+        assertEquals(address2, updatedAccountHolder.getPrimaryAddress());
+        assertEquals(address1, updatedAccountHolder.getMailingAddress());
     }
 }
