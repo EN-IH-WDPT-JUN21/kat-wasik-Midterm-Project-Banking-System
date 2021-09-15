@@ -1,7 +1,10 @@
 package com.example.BankingSystem.model;
 
 import com.example.BankingSystem.enums.Status;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -17,52 +20,56 @@ public class Checking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
-    private BigDecimal balance;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "currency", column = @Column(name = "balance_currency")),
+            @AttributeOverride(name = "amount", column = @Column(name = "balance_amount")),
+    })
+    private Money balance;
     private String secretKey;
 
-    @OneToOne
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE; // default status for newly opened accounts
+
+    @ManyToOne
     private AccountHolder primaryOwner;
 
-    @OneToOne
+    @ManyToOne
     private AccountHolder secondaryOwner; // optional
 
-    private BigDecimal minimumBalance = new BigDecimal("250");
-    private BigDecimal penaltyFee = new BigDecimal("40");
-    private BigDecimal monthlyMaintenanceFee = new BigDecimal("12");
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "currency", column = @Column(name = "minimumBalance_currency")),
+            @AttributeOverride(name = "amount", column = @Column(name = "minimumBalance_amount")),
+    })
+    private Money minimumBalance = new Money(new BigDecimal("250")); // default value 250
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "currency", column = @Column(name = "penaltyFee_currency")),
+            @AttributeOverride(name = "amount", column = @Column(name = "penaltyFee_amount")),
+    })
+    private Money penaltyFee = new Money(new BigDecimal("40")); //default value 40
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "currency", column = @Column(name = "monthly_maintenance_fee_currency")),
+            @AttributeOverride(name = "amount", column = @Column(name = "monthly_maintenance_fee_amount")),
+    })
+    private Money monthlyMaintenanceFee = new Money(new BigDecimal("12")); // default value 12
+
     private LocalDate creationDate = LocalDate.now();
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    public Checking(Money balance, String secretKey, AccountHolder primaryOwner) {
+        this.balance = balance;
+        this.secretKey = secretKey;
+        this.primaryOwner = primaryOwner;
+    }
 
-    // No id constructor
-    public Checking(BigDecimal balance, String secretKey, AccountHolder primaryOwner, AccountHolder secondaryOwner, BigDecimal minimumBalance, BigDecimal penaltyFee, BigDecimal monthlyMaintenanceFee, Status status) {
+    public Checking(Money balance, String secretKey, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         this.balance = balance;
         this.secretKey = secretKey;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
-        this.minimumBalance = minimumBalance;
-        this.penaltyFee = penaltyFee;
-        this.monthlyMaintenanceFee = monthlyMaintenanceFee;
-        this.status = status;
-    }
-
-    // No id, no secondaryOwner constructor
-    public Checking(BigDecimal balance, String secretKey, AccountHolder primaryOwner, BigDecimal minimumBalance, BigDecimal penaltyFee, BigDecimal monthlyMaintenanceFee, Status status) {
-        this.balance = balance;
-        this.secretKey = secretKey;
-        this.primaryOwner = primaryOwner;
-        this.minimumBalance = minimumBalance;
-        this.penaltyFee = penaltyFee;
-        this.monthlyMaintenanceFee = monthlyMaintenanceFee;
-        this.status = status;
-    }
-
-    // No optional parameters constructor
-    public Checking(BigDecimal balance, String secretKey, AccountHolder primaryOwner, Status status) {
-        this.balance = balance;
-        this.secretKey = secretKey;
-        this.primaryOwner = primaryOwner;
-        this.status = status;
     }
 }
