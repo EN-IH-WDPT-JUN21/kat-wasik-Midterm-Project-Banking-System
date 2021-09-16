@@ -59,6 +59,17 @@ public class CheckingService implements ICheckingService {
         }
     }
 
+    public Money getBalance(Integer id) {
+        Optional<Checking> storedChecking = checkingRepository.findById(id);
+
+        if (storedChecking.isPresent()) {
+            return storedChecking.get().getBalance();
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Checking account with id " + id + " does not exist.");
+        }
+    }
+
+
     public void update(Integer id, CheckingDTO checkingDTO) {
         Optional<Checking> storedChecking = checkingRepository.findById(id);
 

@@ -5,6 +5,7 @@ import com.example.BankingSystem.controller.dto.CheckingDTO;
 import com.example.BankingSystem.controller.dto.StatusDTO;
 import com.example.BankingSystem.controller.interfaces.ICheckingController;
 import com.example.BankingSystem.model.Checking;
+import com.example.BankingSystem.model.Money;
 import com.example.BankingSystem.repository.CheckingRepository;
 import com.example.BankingSystem.service.interfaces.ICheckingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,11 @@ public class CheckingController implements ICheckingController {
         Optional<Checking> checkingOptional = checkingRepository.findById(id);
 
         return checkingOptional.isPresent() ? checkingOptional.get() : null;
+    }
+
+    @GetMapping("/checking/{id}/balance")
+    public Money getBalance(@PathVariable Integer id) {
+        return checkingService.getBalance(id);
     }
 
     // UPDATE
