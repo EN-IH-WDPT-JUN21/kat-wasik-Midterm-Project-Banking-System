@@ -97,4 +97,14 @@ public class AccountHolderService implements IAccountHolderService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account Holder with id " + id + " does not exist.");
         }
     }
+
+    public void delete(Integer id) {
+        Optional<AccountHolder> storedAccountHolder = accountHolderRepository.findById(id);
+
+        if (storedAccountHolder.isPresent()) {
+            accountHolderRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account Holder with id " + id + " does not exist.");
+        }
+    }
 }

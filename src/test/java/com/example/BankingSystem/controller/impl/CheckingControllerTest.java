@@ -1,6 +1,7 @@
 package com.example.BankingSystem.controller.impl;
 
 import com.example.BankingSystem.controller.dto.CheckingDTO;
+import com.example.BankingSystem.controller.dto.StatusDTO;
 import com.example.BankingSystem.enums.Status;
 import com.example.BankingSystem.model.AccountHolder;
 import com.example.BankingSystem.model.Address;
@@ -25,11 +26,13 @@ import org.springframework.web.context.WebApplicationContext;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@DirtiesContext(classMode= DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CheckingControllerTest {
     @Autowired
     WebApplicationContext webApplicationContext;
@@ -94,5 +97,74 @@ class CheckingControllerTest {
         assertEquals(newChecking.getMinimumBalance(), new Money(new BigDecimal("250")));
         assertEquals(newChecking.getPenaltyFee(), new Money(new BigDecimal("40")));
         assertEquals(newChecking.getMonthlyMaintenanceFee(), new Money(new BigDecimal("12")));
+        assertEquals(newChecking.getCreationDate(), LocalDate.now());
+    }
+
+    @Test
+    void updateChecking_Valid_Updated() throws Exception {
+        Checking existingChecking = new Checking();
+        existingChecking.setBalance(new Money(new BigDecimal("200")));
+        existingChecking.setSecretKey("jollyW@x16");
+        existingChecking.setPrimaryOwner(accountHolderRepository.findById(2).get());
+        existingChecking.setSecondaryOwner(accountHolderRepository.findById(1).get());
+        checkingRepository.save(existingChecking);
+
+        CheckingDTO checkingDTO = new CheckingDTO();
+        checkingDTO.setBalance("1000");
+        checkingDTO.setSecretKey("b@dRat89");
+        checkingDTO.setPrimaryOwnerId("1");
+        checkingDTO.setSecondaryOwnerId("2");
+
+        String body = objectMapper.writeValueAsString(checkingDTO);
+
+        MvcResult mvcResult = mockMvc.perform(put("/checking/1").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        existingChecking = checkingRepository.findById(1).get();
+
+        assertEquals(existingChecking.getBalance(), new Money(new BigDecimal("1000")));
+        assertEquals(existingChecking.getSecretKey(), "b@dRat89");
+        assertEquals(existingChecking.getPrimaryOwner(), accountHolderRepository.findById(1).get());
+        assertEquals(existingChecking.getSecondaryOwner(), accountHolderRepository.findById(2).get());
+    }
+
+    @Test
+    void updateStatus_Valid_Update() throws Exception {
+        Checking existingChecking = new Checking();
+        existingChecking.setBalance(new Money(new BigDecimal("200")));
+        existingChecking.setSecretKey("jollyW@x16");
+        existingChecking.setPrimaryOwner(accountHolderRepository.findById(2).get());
+        existingChecking.setSecondaryOwner(accountHolderRepository.findById(1).get());
+        checkingRepository.save(existingChecking);
+
+        StatusDTO statusDTO = new StatusDTO("frozen");
+        String body = objectMapper.writeValueAsString(statusDTO);
+
+        MvcResult mvcResult = mockMvc
+                .perform(patch("/checking/1/status").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        assertEquals(Status.FROZEN, checkingRepository.findById(1).get().getStatus());
+    }
+
+    @Test
+    void updateStatus_InvalidValue_BadRequest() throws Exception {
+        Checking existingChecking = new Checking();
+        existingChecking.setBalance(new Money(new BigDecimal("200")));
+        existingChecking.setSecretKey("jollyW@x16");
+        existingChecking.setPrimaryOwner(accountHolderRepository.findById(2).get());
+        existingChecking.setSecondaryOwner(accountHolderRepository.findById(1).get());
+        checkingRepository.save(existingChecking);
+
+        StatusDTO statusDTO = new StatusDTO("invalid value");
+        String body = objectMapper.writeValueAsString(statusDTO);
+
+        MvcResult mvcResult = mockMvc
+                .perform(patch("/checking/1/status").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(containsString("Status value not valid.")))
+                .andReturn();
     }
 }

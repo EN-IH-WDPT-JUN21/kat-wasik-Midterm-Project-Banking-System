@@ -1,12 +1,8 @@
 package com.example.BankingSystem.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import java.math.RoundingMode;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Objects;
 
@@ -46,7 +42,7 @@ public class Money {
     }
 
     /**
-     * Class constructor with nor arguments, defaults amount to 0. Uses default RoundingMode HALF_EVEN and default currency USD.
+     * Class constructor with no arguments, defaults amount to 0. Uses default RoundingMode HALF_EVEN and default currency USD.
      **/
     public Money() {
         this(new BigDecimal("0"), USD, DEFAULT_ROUNDING);

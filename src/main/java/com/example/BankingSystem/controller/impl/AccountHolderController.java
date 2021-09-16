@@ -51,6 +51,6 @@ public class AccountHolderController implements IAccountHolderController {
     // DELETE
     @DeleteMapping("/accountholder/{id}")
     public void delete(@PathVariable Integer id) {
-        accountHolderRepository.deleteById(id);
+        accountHolderService.delete(id);
     }
 }

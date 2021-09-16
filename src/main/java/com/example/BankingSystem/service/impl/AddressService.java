@@ -41,4 +41,14 @@ public class AddressService implements IAddressService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This Address doesn't exist");
         }
     }
+
+    public void delete(Integer id) {
+        Optional<Address> storedAddress = addressRepository.findById(id);
+
+        if (storedAddress.isPresent()) {
+            addressRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This Address doesn't exist");
+        }
+    }
 }

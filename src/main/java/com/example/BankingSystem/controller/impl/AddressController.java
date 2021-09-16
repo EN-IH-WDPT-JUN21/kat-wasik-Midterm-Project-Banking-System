@@ -51,6 +51,6 @@ public class AddressController implements IAddressController {
     // DELETE
     @DeleteMapping("/address/{id}")
     public void delete(@PathVariable Integer id) {
-        addressRepository.deleteById(id);
+        addressService.delete(id);
     }
 }
