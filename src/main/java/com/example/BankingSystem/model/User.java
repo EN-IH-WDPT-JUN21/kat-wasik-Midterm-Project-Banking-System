@@ -17,10 +17,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String name;
     private String username;
     private String password;
 
     @ManyToOne
     private Role role;
 
+    public User(String name, String username, String password, Role role) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 }

@@ -11,14 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Admin {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    private String name;
+public class Admin extends User {
+    public Admin(String name, String username, String password, Role role) {
+        super(name, username, password, role);
+    }
 }

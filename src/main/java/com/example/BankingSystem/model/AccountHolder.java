@@ -1,26 +1,20 @@
 package com.example.BankingSystem.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class AccountHolder {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    private String name;
+public class AccountHolder extends User {
     private LocalDate dateOfBirth;
 
     @ManyToOne
@@ -29,29 +23,16 @@ public class AccountHolder {
     @ManyToOne
     private Address mailingAddress; // optional
 
-    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {
-        this.name = name;
+    public AccountHolder(String name, String username, String password, Role role, LocalDate dateOfBirth, Address primaryAddress, Address mailingAddress) {
+        super(name, username, password, role);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;
     }
 
-    public AccountHolder(String name, LocalDate dateOfBirth, Address primaryAddress) {
-        this.name = name;
+    public AccountHolder(String name, String username, String password, Role role, LocalDate dateOfBirth, Address primaryAddress) {
+        super(name, username, password, role);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AccountHolder that = (AccountHolder) o;
-        return getName().equals(that.getName()) && getDateOfBirth().equals(that.getDateOfBirth()) && getPrimaryAddress().equals(that.getPrimaryAddress()) && Objects.equals(getMailingAddress(), that.getMailingAddress());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), getDateOfBirth(), getPrimaryAddress(), getMailingAddress());
     }
 }
