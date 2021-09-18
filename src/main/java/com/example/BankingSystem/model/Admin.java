@@ -11,6 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Admin extends User {
     public Admin(String name, String username, String password, Role role) {
         super(name, username, password, role);

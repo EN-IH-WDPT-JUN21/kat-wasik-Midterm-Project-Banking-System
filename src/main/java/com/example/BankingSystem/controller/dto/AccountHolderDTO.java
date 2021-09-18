@@ -23,9 +23,6 @@ public class AccountHolderDTO {
     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = "Password must contain at least one uppercase letter, at least one lowercase letter, at least one digit, at least one special characters and must consist of at least 8 characters.")
     private String password;
 
-    @NotEmpty(message = "Role id can't be empty or null.")
-    private String roleName;
-
     @NotEmpty(message = "Date of birth can't empty or null")
     @Pattern(regexp = "^((19|2[0-9])[0-9]{2})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$", message = "Expected date format: YYYY-MM-DD")
     private String dateOfBirth;
@@ -37,11 +34,10 @@ public class AccountHolderDTO {
     @Pattern(regexp = "\\d+", message = "Secondary address id must consist of at least one digit and only digits.")
     private String mailingAddressId; // optional
 
-    public AccountHolderDTO(String name, String username, String password, String roleName, String dateOfBirth, String primaryAddressId) {
+    public AccountHolderDTO(String name, String username, String password, String dateOfBirth, String primaryAddressId) {
         this.name = name;
         this.username = username;
         this.password = password;
-        this.roleName = roleName;
         this.dateOfBirth = dateOfBirth;
         this.primaryAddressId = primaryAddressId;
     }

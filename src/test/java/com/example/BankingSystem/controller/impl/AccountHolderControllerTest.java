@@ -1,10 +1,14 @@
 package com.example.BankingSystem.controller.impl;
 
 import com.example.BankingSystem.controller.dto.AccountHolderDTO;
+import com.example.BankingSystem.controller.util.PasswordUtil;
+import com.example.BankingSystem.enums.RoleName;
 import com.example.BankingSystem.model.AccountHolder;
 import com.example.BankingSystem.model.Address;
+import com.example.BankingSystem.model.Role;
+import com.example.BankingSystem.repository.AccountHolderRepository;
 import com.example.BankingSystem.repository.AddressRepository;
-import com.example.BankingSystem.repository.UserRepository;
+import com.example.BankingSystem.repository.RoleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -20,12 +23,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.reset;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -35,10 +36,13 @@ class AccountHolderControllerTest {
     WebApplicationContext webApplicationContext;
 
     @Autowired
-    UserRepository userRepository;
+    AccountHolderRepository accountHolderRepository;
 
     @Autowired
     AddressRepository addressRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     MockMvc mockMvc;
 
@@ -47,17 +51,23 @@ class AccountHolderControllerTest {
     Address address1;
     Address address2;
 
+    AccountHolder accountHolder1;
+
+    Role accountHolderRole = new Role(RoleName.ACCOUNTHOLDER);
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         address1 = addressRepository.save(new Address("Ct. Villena 121", "Paredes de Nava", " 34300", "Spain"));
         address2 = addressRepository.save(new Address("3715 Beechwood Drive", "Laurel", "20707", "United States"));
+
+        accountHolder1 = accountHolderRepository.save(new AccountHolder("Mary Poppins", "accountholder2", PasswordUtil.encryptedPassword("!voryRed55"), accountHolderRole, LocalDate.of(1961, 9, 17), address1));
     }
 
     @AfterEach
     void tearDown() {
-        userRepository.deleteAll();
+        accountHolderRepository.deleteAll();
         addressRepository.deleteAll();
     }
 
@@ -67,7 +77,6 @@ class AccountHolderControllerTest {
         accountHolderDTO.setName("John Smith");
         accountHolderDTO.setUsername("accountholder1");
         accountHolderDTO.setPassword("w@ckyOwl98");
-        accountHolderDTO.setRoleName("accountholder");
         accountHolderDTO.setDateOfBirth("1945-09-23");
         accountHolderDTO.setPrimaryAddressId("1");
         accountHolderDTO.setMailingAddressId("2");
@@ -80,7 +89,7 @@ class AccountHolderControllerTest {
 
         assertTrue(mvcResult.getResponse().getContentAsString().contains("John Smith"));
         assertTrue(mvcResult.getResponse().getContentAsString().contains("accountholder1"));
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("w@ckyOwl98"));
+//        assertTrue(mvcResult.getResponse().getContentAsString().contains("w@ckyOwl98"));
         assertTrue(mvcResult.getResponse().getContentAsString().contains("accountholder"));
         assertTrue(mvcResult.getResponse().getContentAsString().contains("1945-09-23"));
         assertTrue(mvcResult.getResponse().getContentAsString().contains("Ct. Villena 121"));
@@ -202,32 +211,31 @@ class AccountHolderControllerTest {
 //                .andReturn();
 //    }
 //
-//    @Test
-//    void updateAccountHolder_Valid_Updated() throws Exception {
-//        AccountHolder existingAccountHolder = new AccountHolder();
-//        existingAccountHolder.setName("John Smith");
-//        existingAccountHolder.setDateOfBirth(LocalDate.of(1945, 9, 23));
-//        existingAccountHolder.setPrimaryAddress(address1);
-//        existingAccountHolder.setMailingAddress(address2);
-//        accountHolderRepository.save(existingAccountHolder);
-//
-//        AccountHolderDTO accountHolderDTO = new AccountHolderDTO();
-//        accountHolderDTO.setName("Mary Poppins");
-//        accountHolderDTO.setDateOfBirth("1995-01-12");
-//        accountHolderDTO.setPrimaryAddressId("2");
-//        accountHolderDTO.setMailingAddressId("1");
-//
-//        String body = objectMapper.writeValueAsString(accountHolderDTO);
-//
-//        MvcResult mvcResult = mockMvc.perform(put("/accountholder/1").content(body).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNoContent())
-//                .andReturn();
-//
-//        AccountHolder updatedAccountHolder = accountHolderRepository.findById(1).get();
-//
-//        assertEquals("Mary Poppins", updatedAccountHolder.getName());
-//        assertEquals(LocalDate.of(1995, 1, 12), updatedAccountHolder.getDateOfBirth());
-//        assertEquals(address2, updatedAccountHolder.getPrimaryAddress());
-//        assertEquals(address1, updatedAccountHolder.getMailingAddress());
-//    }
+    @Test
+    void updateAccountHolder_Valid_Updated() throws Exception {
+        AccountHolderDTO accountHolderDTO = new AccountHolderDTO();
+        accountHolderDTO.setName("Mary Poppins");
+        accountHolderDTO.setUsername("accountholder2");
+        accountHolderDTO.setPassword("$hinyWalrus55");
+        accountHolderDTO.setDateOfBirth("1995-01-12");
+        accountHolderDTO.setPrimaryAddressId("2");
+        accountHolderDTO.setMailingAddressId("1");
+
+        String body = objectMapper.writeValueAsString(accountHolderDTO);
+
+        Integer id = accountHolder1.getId();
+
+        MvcResult mvcResult = mockMvc.perform(put("/accountholder/" + id).content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        AccountHolder updatedAccountHolder = accountHolderRepository.findById(id).get();
+
+        assertEquals("Mary Poppins", updatedAccountHolder.getName());
+        assertEquals("accountholder2", updatedAccountHolder.getUsername());
+//        assertEquals("goo)Summer84", updatedAccountHolder.getPassword());
+        assertEquals(LocalDate.of(1995, 1, 12), updatedAccountHolder.getDateOfBirth());
+        assertEquals(address2, updatedAccountHolder.getPrimaryAddress());
+        assertEquals(address1, updatedAccountHolder.getMailingAddress());
+    }
 }

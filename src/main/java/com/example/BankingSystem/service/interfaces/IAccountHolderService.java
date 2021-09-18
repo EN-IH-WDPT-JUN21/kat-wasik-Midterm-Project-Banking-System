@@ -5,7 +5,7 @@ import com.example.BankingSystem.model.AccountHolder;
 import com.example.BankingSystem.model.User;
 
 public interface IAccountHolderService {
-    User store(AccountHolderDTO accountHolderDTO);
-//    void update(Integer id, AccountHolderDTO accountHolderDTO);
-//    void delete(Integer id);
+    AccountHolder store(AccountHolderDTO accountHolderDTO);
+    void update(Integer id, AccountHolderDTO accountHolderDTO);
+    void delete(Integer id);
 }

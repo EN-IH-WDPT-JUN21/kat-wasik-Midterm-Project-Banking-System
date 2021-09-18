@@ -19,10 +19,6 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RoleName name;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<User> users;
-
-    public Role(RoleName name) {
-        this.name = name;
-    }
+//    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    private List<User> users;
 }
