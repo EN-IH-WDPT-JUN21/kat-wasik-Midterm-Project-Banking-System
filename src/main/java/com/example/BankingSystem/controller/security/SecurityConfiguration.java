@@ -33,20 +33,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic(); // makes it impossible to set public access?
+        http.httpBasic();
         http.csrf().disable();
         http.authorizeRequests()
 //                .mvcMatchers(HttpMethod.GET, "/hello-world").authenticated()
-//                .mvcMatchers(HttpMethod.GET, "/courses").authenticated()
-//                .mvcMatchers(HttpMethod.GET, "/products").authenticated()
-//                .mvcMatchers(HttpMethod.GET, "/products/**").hasAnyRole("ADMIN","USER")
-//                .mvcMatchers(HttpMethod.POST, "/products").hasAnyRole("ADMIN","TECHNICIAN")
-//                .mvcMatchers(HttpMethod.GET, "/checking").hasRole("ADMIN")
-                .mvcMatchers(HttpMethod.POST, "/accountholder").hasRole("ADMIN")
-                .mvcMatchers(HttpMethod.GET, "/accountholder").hasRole("ADMIN")
-                .mvcMatchers(HttpMethod.POST, "/accountholder/*").hasRole("ADMIN")
-                .mvcMatchers(HttpMethod.PUT, "/accountholder/*").hasRole("ADMIN")
-                .mvcMatchers(HttpMethod.DELETE, "/accountholder/*").hasRole("ADMIN")
-                .anyRequest().permitAll();
+                .mvcMatchers(HttpMethod.POST, "/address").hasAnyRole("ADMIN", "ACCOUNTHOLDER")
+                .anyRequest().hasRole("ADMIN");
     }
 }
