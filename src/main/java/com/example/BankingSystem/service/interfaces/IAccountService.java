@@ -8,6 +8,7 @@ import com.example.BankingSystem.model.Money;
 
 public interface IAccountService {
     Account store(AccountDTO accountDTO);
+    Account getById(Integer id, String username);
     Money getBalance(Integer id);
     void update(Integer id, AccountDTO accountDTO);
     void updateStatus(Integer id, StatusDTO statusDTO);

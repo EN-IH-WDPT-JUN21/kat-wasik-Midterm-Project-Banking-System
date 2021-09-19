@@ -4,12 +4,10 @@ import com.example.BankingSystem.controller.dto.AccountDTO;
 import com.example.BankingSystem.controller.dto.BalanceDTO;
 import com.example.BankingSystem.controller.dto.StatusDTO;
 import com.example.BankingSystem.controller.util.PasswordUtil;
+import com.example.BankingSystem.enums.RoleName;
 import com.example.BankingSystem.enums.Status;
 import com.example.BankingSystem.model.*;
-import com.example.BankingSystem.repository.AccountHolderRepository;
-import com.example.BankingSystem.repository.AccountRepository;
-import com.example.BankingSystem.repository.CheckingAccountRepository;
-import com.example.BankingSystem.repository.StudentCheckingAccountRepository;
+import com.example.BankingSystem.repository.*;
 import com.example.BankingSystem.service.interfaces.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +33,9 @@ public class AccountService implements IAccountService {
 
     @Autowired
     AccountHolderRepository accountHolderRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     public Account store(AccountDTO accountDTO) {
         Account newAccount;
@@ -83,6 +84,31 @@ public class AccountService implements IAccountService {
             return storedAccount.get().getBalance();
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account with id " + id + " does not exist.");
+        }
+    }
+
+    public Account getById(Integer id, String username) {
+        Optional<Account> accountOptional = accountRepository.findById(id);
+
+        if (!accountOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account with this id " + id + " does not exist.");
+        }
+
+        Account account = accountOptional.get();
+
+        User user = userRepository.findByUsername(username).get();
+
+        AccountHolder primaryOwner = account.getPrimaryOwner();
+        Optional<AccountHolder> secondaryOwnerOptional = Optional.ofNullable(account.getSecondaryOwner());
+
+        if (user.getId().equals(primaryOwner.getId())) {
+            return account;
+        } else if (secondaryOwnerOptional.isPresent() && user.getId().equals(secondaryOwnerOptional.get().getId())) {
+            return account;
+        } else if (user.getRole().getName().equals(RoleName.ADMIN)) {
+            return account;
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to get this account.");
         }
     }
 

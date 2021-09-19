@@ -10,6 +10,7 @@ import com.example.BankingSystem.repository.AccountRepository;
 import com.example.BankingSystem.service.interfaces.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,10 +39,10 @@ public class AccountController implements IAccountController {
     }
 
     @GetMapping("/account/{id}")
-    public Account getById(@PathVariable Integer id) {
-        Optional<Account> accountOptional = accountRepository.findById(id);
+    public Account getById(@PathVariable Integer id, Authentication authentication) {
+        String username = authentication.getName();
 
-        return accountOptional.isPresent() ? accountOptional.get() : null;
+        return accountService.getById(id, username);
     }
 
     @GetMapping("/account/{id}/balance")
