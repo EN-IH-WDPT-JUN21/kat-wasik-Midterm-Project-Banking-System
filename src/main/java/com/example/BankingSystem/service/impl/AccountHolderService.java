@@ -31,6 +31,9 @@ public class AccountHolderService implements IAccountHolderService {
     AddressRepository addressRepository;
 
     @Autowired
+    UserRepository userRepository;
+
+    @Autowired
     RoleRepository roleRepository;
 
     public AccountHolder store(AccountHolderDTO accountHolderDTO) {

@@ -27,6 +27,7 @@ public class BankingSystemApplication {
     @Bean
     InitializingBean createRoles() {
         return () -> {
+
             for (RoleName roleName : RoleName.values()) {
                 roleRepository.save(new Role(roleName));
             }

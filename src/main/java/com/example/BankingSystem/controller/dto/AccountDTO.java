@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckingDTO {
+public class AccountDTO {
     @NotEmpty(message = "Balance can't be empty or null.")
     @Digits(integer = 12, fraction = 2, message = "Only digits allowed for Balance.")
     private String balance;
