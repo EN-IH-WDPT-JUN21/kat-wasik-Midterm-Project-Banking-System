@@ -4,7 +4,6 @@ import com.example.BankingSystem.controller.dto.AccountDTO;
 import com.example.BankingSystem.controller.dto.BalanceDTO;
 import com.example.BankingSystem.controller.dto.StatusDTO;
 import com.example.BankingSystem.controller.util.PasswordUtil;
-import com.example.BankingSystem.enums.RoleName;
 import com.example.BankingSystem.enums.Status;
 import com.example.BankingSystem.model.*;
 import com.example.BankingSystem.repository.*;
@@ -98,14 +97,7 @@ public class AccountService implements IAccountService {
 
         User user = userRepository.findByUsername(username).get();
 
-        AccountHolder primaryOwner = account.getPrimaryOwner();
-        Optional<AccountHolder> secondaryOwnerOptional = Optional.ofNullable(account.getSecondaryOwner());
-
-        if (user.getId().equals(primaryOwner.getId())) {
-            return account;
-        } else if (secondaryOwnerOptional.isPresent() && user.getId().equals(secondaryOwnerOptional.get().getId())) {
-            return account;
-        } else if (user.getRole().getName().equals(RoleName.ADMIN)) {
+        if (user.isAdmin() || user.isOwner(account)) {
             return account;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to get this account.");

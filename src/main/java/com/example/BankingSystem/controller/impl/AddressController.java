@@ -38,7 +38,7 @@ public class AddressController implements IAddressController {
     public Address getById(@PathVariable Integer id) {
         Optional<Address> addressOptional = addressRepository.findById(id);
 
-        return addressOptional.isPresent() ? addressOptional.get() : null;
+        return addressOptional.orElse(null);
     }
 
     // UPDATE

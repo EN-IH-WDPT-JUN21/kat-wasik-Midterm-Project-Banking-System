@@ -1,5 +1,6 @@
 package com.example.BankingSystem.model;
 
+import com.example.BankingSystem.enums.RoleName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -30,6 +32,24 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+    
+    public boolean isAdmin() {
+        return getRole().getName().equals(RoleName.ADMIN);
+    }
+    
+    public boolean isOwner(Account account) {
+        AccountHolder primaryOwner = account.getPrimaryOwner();
+        Optional<AccountHolder> secondaryOwnerOptional = Optional.ofNullable(account.getSecondaryOwner());
+        Integer userId = getId();
+
+        if (userId.equals(primaryOwner.getId())) {
+            return true;
+        } else if (secondaryOwnerOptional.isPresent() && userId.equals(secondaryOwnerOptional.get().getId())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
