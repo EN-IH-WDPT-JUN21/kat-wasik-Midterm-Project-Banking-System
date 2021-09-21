@@ -5,8 +5,6 @@ import com.example.BankingSystem.controller.util.PasswordUtil;
 import com.example.BankingSystem.enums.RoleName;
 import com.example.BankingSystem.model.AccountHolder;
 import com.example.BankingSystem.model.Address;
-import com.example.BankingSystem.model.Role;
-import com.example.BankingSystem.model.User;
 import com.example.BankingSystem.repository.AccountHolderRepository;
 import com.example.BankingSystem.repository.AddressRepository;
 import com.example.BankingSystem.repository.RoleRepository;
@@ -14,12 +12,10 @@ import com.example.BankingSystem.repository.UserRepository;
 import com.example.BankingSystem.service.interfaces.IAccountHolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service

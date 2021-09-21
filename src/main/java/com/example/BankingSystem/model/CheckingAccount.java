@@ -31,4 +31,11 @@ public class CheckingAccount extends Account {
     })
     private Money monthlyMaintenanceFee = new Money(new BigDecimal("12")); // default value 12
 
+    public CheckingAccount(Money balance, String secretKey, AccountHolder primaryOwner) {
+        super(balance, secretKey, primaryOwner);
+    }
+
+    public CheckingAccount(Money balance, String secretKey, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+        super(balance, secretKey, primaryOwner, secondaryOwner);
+    }
 }

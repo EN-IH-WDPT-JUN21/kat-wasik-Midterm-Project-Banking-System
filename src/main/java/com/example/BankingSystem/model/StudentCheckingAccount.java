@@ -12,4 +12,11 @@ import javax.persistence.Entity;
 @Setter
 @NoArgsConstructor
 public class StudentCheckingAccount extends Account {
+    public StudentCheckingAccount(Money balance, String secretKey, AccountHolder primaryOwner) {
+        super(balance, secretKey, primaryOwner);
+    }
+
+    public StudentCheckingAccount(Money balance, String secretKey, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+        super(balance, secretKey, primaryOwner, secondaryOwner);
+    }
 }

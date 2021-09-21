@@ -46,14 +46,16 @@ public class Account {
 
     private LocalDate creationDate = LocalDate.now();
 
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", balance=" + balance +
-                ", secretKey='" + secretKey + '\'' +
-                ", status=" + status +
-                ", primaryOwner=" + primaryOwner +
-                '}';
+    public Account(Money balance, String secretKey, AccountHolder primaryOwner) {
+        this.balance = balance;
+        this.secretKey = secretKey;
+        this.primaryOwner = primaryOwner;
+    }
+
+    public Account(Money balance, String secretKey, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+        this.balance = balance;
+        this.secretKey = secretKey;
+        this.primaryOwner = primaryOwner;
+        this.secondaryOwner = secondaryOwner;
     }
 }
