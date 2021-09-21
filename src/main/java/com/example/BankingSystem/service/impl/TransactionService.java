@@ -61,8 +61,8 @@ public class TransactionService implements ITransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient funds");
         }
 
-        senderAccount.get().setBalance(new Money(senderAccount.get().getBalance().decreaseAmount(amount)));
-        receiverAccount.get().setBalance(new Money(receiverAccount.get().getBalance().increaseAmount(amount.getAmount())));
+        senderAccount.get().decreaseBalance(amount);
+        receiverAccount.get().increaseBalance(amount);
 
         return transactionRepository.save(newTransaction);
     }

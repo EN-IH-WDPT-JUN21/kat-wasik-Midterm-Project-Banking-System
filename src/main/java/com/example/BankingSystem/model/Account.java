@@ -58,4 +58,12 @@ public class Account {
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
     }
+
+    public void increaseBalance(Money amount) {
+        setBalance(new Money(balance.increaseAmount(amount)));
+    }
+
+    public void decreaseBalance(Money amount) {
+        setBalance(new Money(balance.decreaseAmount(amount)));
+    }
 }

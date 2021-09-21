@@ -38,4 +38,13 @@ public class CheckingAccount extends Account {
     public CheckingAccount(Money balance, String secretKey, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         super(balance, secretKey, primaryOwner, secondaryOwner);
     }
+
+    @Override
+    public void decreaseBalance(Money amount) {
+        super.decreaseBalance(amount);
+
+        if (getBalance().getAmount().compareTo(getMinimumBalance().getAmount()) < 0) {
+            setBalance(new Money(getBalance().decreaseAmount(getPenaltyFee().getAmount())));
+        }
+    }
 }
