@@ -18,12 +18,22 @@ public class AddressService implements IAddressService {
     AddressRepository addressRepository;
 
     public Address store(AddressDTO addressDTO) {
-        Address newAddress = new Address(addressDTO.getStreet(), addressDTO.getCity(), addressDTO.getPostalCode(), addressDTO.getPostalCode());
+        Address newAddress = new Address(addressDTO.getStreet(), addressDTO.getCity(), addressDTO.getPostalCode(), addressDTO.getCountry());
 
         if (!addressRepository.findAll().contains(newAddress)) {
             return addressRepository.save(newAddress);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This address already exists in the system.");
+        }
+    }
+
+    public Address getById(Integer id) {
+        Optional<Address> addressOptional = addressRepository.findById(id);
+
+        if (addressOptional.isPresent()) {
+            return addressOptional.get();
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Address with this id does not exist.");
         }
     }
 
@@ -38,7 +48,7 @@ public class AddressService implements IAddressService {
             storedAddress.get().setCountry(addressDTO.getCountry());
             addressRepository.save(storedAddress.get());
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This Address doesn't exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Address with this id does not exist.");
         }
     }
 
@@ -47,8 +57,6 @@ public class AddressService implements IAddressService {
 
         if (storedAddress.isPresent()) {
             addressRepository.deleteById(id);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This Address doesn't exist");
         }
     }
 }

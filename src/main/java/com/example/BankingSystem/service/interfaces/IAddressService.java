@@ -4,7 +4,8 @@ import com.example.BankingSystem.controller.dto.AddressDTO;
 import com.example.BankingSystem.model.Address;
 
 public interface IAddressService {
-    public void update(Integer id, AddressDTO addressDTO);
     public Address store(AddressDTO addressDTO);
+    public Address getById(Integer id);
+    public void update(Integer id, AddressDTO addressDTO);
     public void delete(Integer id);
 }

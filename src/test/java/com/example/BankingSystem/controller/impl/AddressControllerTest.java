@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,6 +63,19 @@ class AddressControllerTest {
     }
 
     @Test
+    void addNewAddress_AlreadyExists_BadRequest() throws Exception {
+        AddressDTO addressDTO = new AddressDTO("Ct. Villena 121", "Paredes de Nava", " 34300", "Spain");
+
+        String body = objectMapper.writeValueAsString(addressDTO);
+
+        MvcResult mvcResult = mockMvc
+                .perform(post("/address").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(containsString("This address already exists in the system.")))
+                .andReturn();
+    }
+
+    @Test
     void getAll_Valid_Found() throws Exception {
         MvcResult mvcResult = mockMvc
                 .perform(get("/address"))
@@ -81,6 +95,15 @@ class AddressControllerTest {
 
         assertTrue(mvcResult.getResponse().getContentAsString().contains("Villena 121"));
         assertFalse(mvcResult.getResponse().getContentAsString().contains("20707"));
+    }
+
+    @Test
+    void getById_DoesNotExist_BadRequest() throws Exception {
+        MvcResult mvcResult = mockMvc
+                .perform(get("/address/99"))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(containsString("Address with this id does not exist.")))
+                .andReturn();
     }
 
     @Test
@@ -114,6 +137,19 @@ class AddressControllerTest {
         MvcResult mvcResult = mockMvc
                 .perform(put("/address/" + id).content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    void updateAddress_DoestNotExist_BadRequest() throws Exception {
+        AddressDTO addressDTO = new AddressDTO("Ansbacher Strasse 50", "Niederweiler", "55491", "Germany");
+
+        String body = objectMapper.writeValueAsString(addressDTO);
+
+        MvcResult mvcResult = mockMvc
+                .perform(put("/address/99").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(containsString("Address with this id does not exist.")))
                 .andReturn();
     }
 
