@@ -8,6 +8,7 @@ import com.example.BankingSystem.enums.Status;
 import com.example.BankingSystem.model.*;
 import com.example.BankingSystem.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jdk.jshell.spi.ExecutionControlProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -130,6 +131,31 @@ class AccountControllerTest {
         assertEquals(newAccount.getCreationDate(), LocalDate.now());
     }
 
+//    @Test
+//    void addNewAccount_NoSecondaryOwner_Created() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void addNewAccount_PrimaryOwnerDoesNotExist_BadRequest() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void addNewAccount_SecondaryOwnerDoestNotExist_BadRequest() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void getById_Valid_Found() throws Exception {
+//
+//    }
+
+    @Test
+    void getAll_Valid_Found() throws Exception {
+
+    }
+
     @Test
     void updateAccount_Valid_Updated() throws Exception {
         CheckingAccount existingAccount = new CheckingAccount();
@@ -159,8 +185,13 @@ class AccountControllerTest {
         assertEquals(existingAccount.getSecondaryOwner(), accountHolderRepository.findById(3).get());
     }
 
+//    @Test
+//    void updateAccount_DoestNotExist_BadRequest() throws Exception {
+//
+//    }
+
     @Test
-    void updateStatus_Valid_Update() throws Exception {
+    void updateStatus_Valid_Updated() throws Exception {
         CheckingAccount existingAccount = new CheckingAccount();
         existingAccount.setBalance(new Money(new BigDecimal("200")));
         existingAccount.setSecretKey("jollyW@x16");
@@ -197,4 +228,19 @@ class AccountControllerTest {
                 .andExpect(status().reason(containsString("Status value not valid.")))
                 .andReturn();
     }
+
+//    @Test
+//    void updateBalance_Valid_Updated() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void updateBalance_InvalidValue_BadRequest() throws Exception {
+//
+//    }
+//
+//    @Test
+//    void deleteAccount_Valid_Deleted() throws Exception {
+//
+//    }
 }

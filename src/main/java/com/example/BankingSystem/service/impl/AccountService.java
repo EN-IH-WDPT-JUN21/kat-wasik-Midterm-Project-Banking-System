@@ -76,16 +76,6 @@ public class AccountService implements IAccountService {
         }
     }
 
-    public Money getBalance(Integer id) {
-        Optional<Account> storedAccount = accountRepository.findById(id);
-
-        if (storedAccount.isPresent()) {
-            return storedAccount.get().getBalance();
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account with id " + id + " does not exist.");
-        }
-    }
-
     public Account getById(Integer id, String username) {
         Optional<Account> accountOptional = accountRepository.findById(id);
 
@@ -104,6 +94,15 @@ public class AccountService implements IAccountService {
         }
     }
 
+    public Money getBalance(Integer id) {
+        Optional<Account> storedAccount = accountRepository.findById(id);
+
+        if (storedAccount.isPresent()) {
+            return storedAccount.get().getBalance();
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account with id " + id + " does not exist.");
+        }
+    }
 
     public void update(Integer id, AccountDTO accountDTO) {
         Optional<Account> storedAccount = accountRepository.findById(id);

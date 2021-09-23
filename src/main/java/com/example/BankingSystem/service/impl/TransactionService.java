@@ -1,6 +1,7 @@
 package com.example.BankingSystem.service.impl;
 
 import com.example.BankingSystem.controller.dto.TransactionDTO;
+import com.example.BankingSystem.enums.Status;
 import com.example.BankingSystem.model.Account;
 import com.example.BankingSystem.model.Money;
 import com.example.BankingSystem.model.Transaction;
@@ -28,6 +29,7 @@ public class TransactionService implements ITransactionService {
     @Autowired
     TransactionRepository transactionRepository;
 
+    // CREATE
     public Transaction store(TransactionDTO transactionDTO, String username) {
         User user = userRepository.findByUsername(username).get();
         Optional<Account> senderAccount = accountRepository.findById(Integer.parseInt(transactionDTO.getSenderAccountId()));
@@ -35,25 +37,29 @@ public class TransactionService implements ITransactionService {
         String receiverAccountOwnerName = transactionDTO.getReceiverAccountOwnerName();
         Money amount = new Money(new BigDecimal(transactionDTO.getAmount()));
 
-        Transaction newTransaction = new Transaction();
-
         if (senderAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The account with id " + transactionDTO.getSenderAccountId() + " does not exist.");
         }
+
         if (!user.isOwner(senderAccount.get())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You have no permission to send money from this account (you are not an owner).");
         }
 
-        newTransaction.setSenderAccount(senderAccount.get());
-
         if (receiverAccount.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The account with id " + transactionDTO.getReceiverAccountId() + " does not exist.");
         }
+
         if (!receiverAccountOwnerName.equals(receiverAccount.get().getPrimaryOwner().getName())
                 && !receiverAccountOwnerName.equals(receiverAccount.get().getSecondaryOwner().getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Receiver account owner name incorrect.");
         }
 
+        if (senderAccount.get().getStatus().equals(Status.FROZEN)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your account is frozen.");
+        }
+
+        Transaction newTransaction = new Transaction();
+        newTransaction.setSenderAccount(senderAccount.get());
         newTransaction.setReceiverAccount(receiverAccount.get());
         newTransaction.setAmount(amount);
 
@@ -65,5 +71,16 @@ public class TransactionService implements ITransactionService {
         receiverAccount.get().increaseBalance(amount);
 
         return transactionRepository.save(newTransaction);
+    }
+
+    // DELETE
+    public void delete(Integer id) {
+        Optional<Transaction> storedTransaction = transactionRepository.findById(id);
+
+        if (storedTransaction.isPresent()) {
+            transactionRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction transaction with id " + id + " does not exist.");
+        }
     }
 }

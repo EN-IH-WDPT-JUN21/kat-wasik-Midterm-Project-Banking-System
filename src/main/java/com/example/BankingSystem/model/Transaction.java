@@ -1,5 +1,6 @@
 package com.example.BankingSystem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Transaction {
     private Account senderAccount;
 
     @ManyToOne
+    @JsonIgnore
     private Account receiverAccount;
 
     @Embedded

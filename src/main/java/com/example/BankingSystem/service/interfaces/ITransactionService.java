@@ -5,4 +5,5 @@ import com.example.BankingSystem.model.Transaction;
 
 public interface ITransactionService {
     Transaction store(TransactionDTO transactionDTO, String username);
+    void delete(Integer id);
 }
