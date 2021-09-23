@@ -42,7 +42,7 @@ public class TransactionService implements ITransactionService {
         }
 
         if (!user.isOwner(senderAccount.get())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You have no permission to send money from this account (you are not an owner).");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You have no permission to send money from this account (you are not an owner).");
         }
 
         if (receiverAccount.isEmpty()) {
@@ -73,14 +73,24 @@ public class TransactionService implements ITransactionService {
         return transactionRepository.save(newTransaction);
     }
 
-    // DELETE
-    public void delete(Integer id) {
-        Optional<Transaction> storedTransaction = transactionRepository.findById(id);
+    public Transaction getById(Integer id, String username) {
+        Optional<Transaction> transactionOptional = transactionRepository.findById(id);
 
-        if (storedTransaction.isPresent()) {
-            transactionRepository.deleteById(id);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction transaction with id " + id + " does not exist.");
+        if(!transactionOptional.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction with this id " + id + " does not exist.");
         }
+
+        Transaction transaction = transactionOptional.get();
+
+        Account senderAccount = transaction.getSenderAccount();
+        Account receiverAccount = transaction.getReceiverAccount();
+        User user = userRepository.findByUsername(username).get();
+
+        if (user.isAdmin() || user.isOwner(senderAccount) || user.isOwner(receiverAccount)) {
+            return transaction;
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to get this transaction.");
+        }
+
     }
 }

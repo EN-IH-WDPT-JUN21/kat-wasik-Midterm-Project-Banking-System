@@ -39,17 +39,9 @@ public class TransactionController implements ITransactionController {
     }
 
     @GetMapping("/transaction/{id}")
-    public Transaction getById(@PathVariable Integer id) {
-        Optional<Transaction> transactionOptional = transactionRepository.findById(id);
+    public Transaction getById(@PathVariable Integer id, Authentication authentication) {
+        String username = authentication.getName();
 
-        return transactionOptional.isPresent() ? transactionOptional.get() : null;
-    }
-
-    // UPDATE
-
-    // DELETE
-    @DeleteMapping("/transaction/{id}")
-    public void delete(@PathVariable Integer id) {
-        transactionService.delete(id);
+        return transactionService.getById(id, username);
     }
 }

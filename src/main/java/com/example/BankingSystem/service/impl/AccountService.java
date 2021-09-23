@@ -84,7 +84,6 @@ public class AccountService implements IAccountService {
         }
 
         Account account = accountOptional.get();
-
         User user = userRepository.findByUsername(username).get();
 
         if (user.isAdmin() || user.isOwner(account)) {
@@ -94,13 +93,20 @@ public class AccountService implements IAccountService {
         }
     }
 
-    public Money getBalance(Integer id) {
-        Optional<Account> storedAccount = accountRepository.findById(id);
+    public Money getBalance(Integer id, String username) {
+        Optional<Account> accountOptional = accountRepository.findById(id);
 
-        if (storedAccount.isPresent()) {
-            return storedAccount.get().getBalance();
-        } else {
+        if (!accountOptional.isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account with id " + id + " does not exist.");
+        }
+
+        Account account = accountOptional.get();
+        User user = userRepository.findByUsername(username).get();
+
+        if (user.isAdmin() || user.isOwner(account)) {
+            return account.getBalance();
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to get this account's balance.");
         }
     }
 

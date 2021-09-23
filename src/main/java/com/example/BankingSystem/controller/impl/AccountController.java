@@ -46,8 +46,10 @@ public class AccountController implements IAccountController {
     }
 
     @GetMapping("/account/{id}/balance")
-    public Money getBalance(@PathVariable Integer id) {
-        return accountService.getBalance(id);
+    public Money getBalance(@PathVariable Integer id, Authentication authentication) {
+        String username = authentication.getName();
+
+        return accountService.getBalance(id, username);
     }
 
     // UPDATE

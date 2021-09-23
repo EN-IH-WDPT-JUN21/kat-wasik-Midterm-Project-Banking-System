@@ -23,7 +23,6 @@ public class Transaction {
     private Account senderAccount;
 
     @ManyToOne
-    @JsonIgnore
     private Account receiverAccount;
 
     @Embedded

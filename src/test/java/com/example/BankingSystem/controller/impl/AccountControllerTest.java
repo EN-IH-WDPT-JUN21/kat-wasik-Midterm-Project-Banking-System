@@ -8,7 +8,6 @@ import com.example.BankingSystem.enums.Status;
 import com.example.BankingSystem.model.*;
 import com.example.BankingSystem.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.jshell.spi.ExecutionControlProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -150,11 +149,11 @@ class AccountControllerTest {
 //    void getById_Valid_Found() throws Exception {
 //
 //    }
-
-    @Test
-    void getAll_Valid_Found() throws Exception {
-
-    }
+//
+//    @Test
+//    void getAll_Valid_Found() throws Exception {
+//
+//    }
 
     @Test
     void updateAccount_Valid_Updated() throws Exception {
