@@ -66,4 +66,13 @@ public class Account {
     public void decreaseBalance(Money amount) {
         setBalance(new Money(balance.decreaseAmount(amount)));
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", primaryOwner=" + primaryOwner +
+                ", secondaryOwner=" + secondaryOwner +
+                '}';
+    }
 }
