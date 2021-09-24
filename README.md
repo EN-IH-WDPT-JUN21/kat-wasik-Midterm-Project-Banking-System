@@ -19,6 +19,14 @@ OR run ```main()``` method of the ```BankingSystemApplication.java``` file.
 4. Use Basic Auth to test the application in Postman. Use username ```admin``` and password ```password``` to get access as the admin.
 5. If you'd like to test the application with a few objects already created uncomment Initializing Bean ```populateDatabase()``` in ```BankingSystemApplication.java``` file and restart the application.
 
+## Functionality
+
+On the application startup the Admin account gets created. The Admin can then create new Addresses, Account Holders and Accounts.
+
+The system have 2 types of accounts: Checking Accounts and Student Checking Accounts. While a new account is created by the Admin, the Primary (Account) Owner's age is evaluated. If the Primary Owner is less than 24, a Student Checking Account is created. Otherwise a regular Checking Account is created. The default status for newly created Account is ACTIVE, but can be later changed to FROZEN by the Admin.
+
+Account Holders that are Primary or Secondary Owners of the Accounts can transfer money to other Accounts. Transactions are successfully added if there are sufficient funds and the Sender Account is not FROZEN. If, after the transaction, the Sender Account's balance drops below the minimum balance (default value 250), penalty fee gets deducted (not applicable to Student Checking Accounts).
+
 ## Endpoints
 
 ### Address
