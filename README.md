@@ -104,4 +104,4 @@ OR run ```main()``` method of the ```BankingSystemApplication.java``` file.
 
 ## EER Diagram
 
-![eerDiagram.png](https://github.com/EN-IH-WDPT-JUN21/kat-wasik-Midterm-Project-Banking-System/src/main/resources/eerDiagram.png)
+![eerDiagram.png](https://github.com/EN-IH-WDPT-JUN21/kat-wasik-Midterm-Project-Banking-System/blob/main/src/main/resources/eerDiagram.png)
