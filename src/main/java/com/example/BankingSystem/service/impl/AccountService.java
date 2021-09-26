@@ -86,6 +86,10 @@ public class AccountService implements IAccountService {
         Account account = accountOptional.get();
         User user = userRepository.findByUsername(username).get();
 
+        if (!((CheckingAccount) account).getMonthlyMaintenanceFee().equals(null)) {
+            ((CheckingAccount) account).applyMonthlyMaintenanceFee();
+        }
+
         if (user.isAdmin() || user.isOwner(account)) {
             return account;
         } else {
@@ -102,6 +106,10 @@ public class AccountService implements IAccountService {
 
         Account account = accountOptional.get();
         User user = userRepository.findByUsername(username).get();
+
+        if (!((CheckingAccount) account).getMonthlyMaintenanceFee().equals(null)) {
+            ((CheckingAccount) account).applyMonthlyMaintenanceFee();
+        }
 
         if (user.isAdmin() || user.isOwner(account)) {
             return account.getBalance();

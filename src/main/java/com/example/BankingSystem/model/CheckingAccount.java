@@ -1,6 +1,5 @@
 package com.example.BankingSystem.model;
 
-import com.example.BankingSystem.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.time.Period;
 
 @Entity
 @Getter
@@ -31,6 +30,8 @@ public class CheckingAccount extends Account {
     })
     private Money monthlyMaintenanceFee = new Money(new BigDecimal("12")); // default value 12
 
+    private LocalDate monthlyFeeLastAdded = LocalDate.now();
+
     public CheckingAccount(Money balance, String secretKey, AccountHolder primaryOwner) {
         super(balance, secretKey, primaryOwner);
     }
@@ -45,6 +46,18 @@ public class CheckingAccount extends Account {
 
         if (getBalance().getAmount().compareTo(getMinimumBalance().getAmount()) < 0) {
             setBalance(new Money(getBalance().decreaseAmount(getPenaltyFee().getAmount())));
+        }
+    }
+
+    public void applyMonthlyMaintenanceFee() {
+        Period period = Period.between(monthlyFeeLastAdded, LocalDate.now());
+        int monthsPassed = period.getMonths();
+
+        if (monthsPassed > 0) {
+            for (int i = monthsPassed; i > 0; i--) {
+                this.decreaseBalance(monthlyMaintenanceFee);
+            }
+            setMonthlyFeeLastAdded(monthlyFeeLastAdded.plusMonths(monthsPassed));
         }
     }
 }

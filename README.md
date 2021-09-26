@@ -23,7 +23,11 @@ OR run ```main()``` method of the ```BankingSystemApplication.java``` file.
 
 On the application startup the Admin account gets created. The Admin can then create new Addresses, Account Holders and Accounts.
 
-The system have 2 types of accounts: Checking Accounts and Student Checking Accounts. While a new account is created by the Admin, the Primary (Account) Owner's age is evaluated. If the Primary Owner is less than 24, a Student Checking Account is created. Otherwise a regular Checking Account is created. The default status for newly created Account is ACTIVE, but can be later changed to FROZEN by the Admin.
+The system have 2 types of accounts: Checking Accounts and Student Checking Accounts. While a new account is created by the Admin, the Primary (Account) Owner's age is evaluated. If the Primary Owner is less than 24, a Student Checking Account is created. Otherwise a regular Checking Account is created. 
+
+In contrast to Student Checking Accounts, regular Checking Accounts have a Monthly Maintenance Fee and a Minimum Balance. A Monthly Maintenance Fee gets calculated and applied if it has passed at least 1 month since a Checking Account was last accessed. A Penalty Fee gets applied if a Checking Account's balance drops below a Minimum Balance.
+
+The default status for newly created Account is ACTIVE, but can be later changed to FROZEN by the Admin.
 
 Account Holders that are Primary or Secondary Owners of the Accounts can transfer money to other Accounts. Transactions are successfully added if there are sufficient funds and the Sender Account is not FROZEN. If, after the transaction, the Sender Account's balance drops below the minimum balance (default value 250), penalty fee gets deducted (not applicable to Student Checking Accounts).
 
@@ -39,6 +43,8 @@ Account Holders that are Primary or Secondary Owners of the Accounts can transfe
 |DELETE|/address/{id}|Delete an address|ADMIN
 
 #### Request Body parameters for POST and PUT methods
+All values to be passed as strings.
+
 ```street``` - cannot be empty or null
 
 ```city``` - cannot be empty or null
@@ -57,6 +63,8 @@ Account Holders that are Primary or Secondary Owners of the Accounts can transfe
 |DELETE|/accountholder/{id}|Delete an existing account holder|ADMIN
 
 #### Request Body parameters for POST and PUT methods
+All values to be passed as strings.
+
 ```name``` - cannot be empty or null
 
 ```username``` - cannot be empty or null
@@ -84,6 +92,8 @@ Account Holders that are Primary or Secondary Owners of the Accounts can transfe
 *Account Holder needs to be the primary or secondary owner of the account to access the endpoint.
 
 #### Request Body parameters for POST and PUT methods
+All values to be passed as strings.
+
 ```balance``` - cannot be empty or null, max 12 digits in integral part and max 2 digits in fraction part of the number
 
 ```secretKey``` - cannot be empty or null, must contain at least one uppercase letter, at least one lowercase letter, at least one digit, at least one special characters and must consist of at least 8 characters
@@ -102,6 +112,8 @@ Account Holders that are Primary or Secondary Owners of the Accounts can transfe
 *Account Holder needs to be the primary or secondary owner of the sender account to post a transaction and the primary or secondary owner of the sender or receiver account to access the transaction information.
 
 #### Request Body parameters for POST method
+All values to be passed as strings.
+
 ```senderAccountId``` - cannot be empty or null, must consist of at least one digit and only digits
 
 ```receiverAccountId``` - cannot be empty or null, must consist of at least one digit and only digits
