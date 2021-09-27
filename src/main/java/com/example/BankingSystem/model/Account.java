@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Getter
@@ -46,6 +47,27 @@ public class Account {
 
     private LocalDate creationDate = LocalDate.now();
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "currency", column = @Column(name = "minimumBalance_currency")),
+            @AttributeOverride(name = "amount", column = @Column(name = "minimumBalance_amount")),
+    })
+    private Money minimumBalance;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "currency", column = @Column(name = "monthly_maintenance_fee_currency")),
+            @AttributeOverride(name = "amount", column = @Column(name = "monthly_maintenance_fee_amount")),
+    })
+    private Money monthlyMaintenanceFee;
+
+    private LocalDate monthlyFeeLastDeducted;
+
+    @Column(precision=18, scale=4)
+    private BigDecimal interestRate;
+
+    private LocalDate interestRateLastAdded;
+
     public Account(Money balance, String secretKey, AccountHolder primaryOwner) {
         this.balance = balance;
         this.secretKey = secretKey;
@@ -65,5 +87,36 @@ public class Account {
 
     public void decreaseBalance(Money amount) {
         setBalance(new Money(balance.decreaseAmount(amount)));
+
+        if (!getMinimumBalance().equals(null)) {
+            if (getBalance().getAmount().compareTo(getMinimumBalance().getAmount()) < 0) {
+                setBalance(new Money(getBalance().decreaseAmount(getPenaltyFee().getAmount())));
+            }
+        }
+    }
+
+    public void applyMonthlyMaintenanceFee() {
+        Period period = Period.between(getMonthlyFeeLastDeducted(), LocalDate.now());
+        int monthsPassed = period.getMonths();
+
+        if (monthsPassed > 0) {
+            for (int i = monthsPassed; i > 0; i--) {
+                this.decreaseBalance(getMonthlyMaintenanceFee());
+            }
+            setMonthlyFeeLastDeducted(getMonthlyFeeLastDeducted().plusMonths(monthsPassed));
+        }
+    }
+
+    public void addInterestRate() {
+        Period period = Period.between(getInterestRateLastAdded(), LocalDate.now());
+        int yearsPassed = period.getYears();
+
+        if (yearsPassed > 0) {
+            for (int i = yearsPassed; i > 0; i--) {
+                Money interest = new Money(getBalance().getAmount().multiply(getInterestRate()));
+                this.increaseBalance(interest);
+            }
+            setInterestRateLastAdded(getInterestRateLastAdded().plusYears(yearsPassed));
+        }
     }
 }

@@ -53,19 +53,22 @@ public class BankingSystemApplication {
         };
     }
 
-//    @Bean
-//    InitializingBean populateDatabase() {
-//        return () -> {
-//            Address address1 = addressRepository.save(new Address("Ct. Villena 121", "Paredes de Nava", " 34300", "Spain"));
-//            Address address2 = addressRepository.save(new Address("3715 Beechwood Drive", "Laurel", "20707", "United States"));
+    @Bean
+    InitializingBean populateDatabase() {
+        return () -> {
+            Address address1 = addressRepository.save(new Address("Ct. Villena 121", "Paredes de Nava", " 34300", "Spain"));
+            Address address2 = addressRepository.save(new Address("3715 Beechwood Drive", "Laurel", "20707", "United States"));
 
-//            AccountHolder accountHolder1 = accountHolderRepository.save(new AccountHolder("John", "john", PasswordUtil.encryptedPassword("password"), roleRepository.findByName(RoleName.ACCOUNTHOLDER).get(), LocalDate.of(1961, 9, 17), address1));
-//            AccountHolder accountHolder2 = accountHolderRepository.save(new AccountHolder("Mary", "mary", PasswordUtil.encryptedPassword("password"), roleRepository.findByName(RoleName.ACCOUNTHOLDER).get(), LocalDate.of(2005, 9, 17), address2));
+            AccountHolder accountHolder1 = accountHolderRepository.save(new AccountHolder("John", "john", PasswordUtil.encryptedPassword("password"), roleRepository.findByName(RoleName.ACCOUNTHOLDER).get(), LocalDate.of(1961, 9, 17), address1));
+            AccountHolder accountHolder2 = accountHolderRepository.save(new AccountHolder("Mary", "mary", PasswordUtil.encryptedPassword("password"), roleRepository.findByName(RoleName.ACCOUNTHOLDER).get(), LocalDate.of(2005, 9, 17), address2));
 
-//            CheckingAccount account1 = accountRepository.save(new CheckingAccount(new Money(new BigDecimal("10000")), "secretkey", accountHolder1));
-//            StudentCheckingAccount account2 = accountRepository.save(new StudentCheckingAccount(new Money(new BigDecimal("10000")), "secretkey", accountHolder2));
-//        };
-//    }
+            CheckingAccount account1 = accountRepository.save(new CheckingAccount(new Money(new BigDecimal("10000")),"secretkey", accountHolder1));
+            StudentCheckingAccount account2 = accountRepository.save(new StudentCheckingAccount(new Money(new BigDecimal("10000")), "secretkey", accountHolder2));
+            SavingsAccount account3 = new SavingsAccount(new Money(new BigDecimal("100000")),"secretkey", accountHolder1);
+            account3.setInterestRateLastAdded(LocalDate.of(2019,8,26));
+            accountRepository.save(account3);
+        };
+    }
 }
 
 

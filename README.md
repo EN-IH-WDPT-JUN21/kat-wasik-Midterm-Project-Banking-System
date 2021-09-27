@@ -23,9 +23,11 @@ OR run ```main()``` method of the ```BankingSystemApplication.java``` file.
 
 On the application startup the Admin account gets created. The Admin can then create new Addresses, Account Holders and Accounts.
 
-The system have 2 types of accounts: Checking Accounts and Student Checking Accounts. While a new account is created by the Admin, the Primary (Account) Owner's age is evaluated. If the Primary Owner is less than 24, a Student Checking Account is created. Otherwise a regular Checking Account is created. 
+The system have 3 types of accounts: Checking Accounts, Student Checking Accounts and Savings Account. While a new account is created by the Admin, the Primary (Account) Owner's age is evaluated. If the Primary Owner is less than 24, a Student Checking Account is created. Otherwise a regular Checking Account is created. Savings Account are created using different endpoint.
 
-In contrast to Student Checking Accounts, regular Checking Accounts have a Monthly Maintenance Fee and a Minimum Balance. A Monthly Maintenance Fee gets calculated and applied if it has passed at least 1 month since a Checking Account was last accessed. A Penalty Fee gets applied if a Checking Account's balance drops below a Minimum Balance.
+In contrast to Student Checking Accounts, regular Checking Accounts have a Monthly Maintenance Fee (default value 12) and a Minimum Balance (default value 250). A Monthly Maintenance Fee gets calculated and applied if it has passed at least 1 month since a Checking Account was last accessed. A Penalty Fee gets applied if a Checking Account's balance drops below a Minimum Balance.
+
+Savings Accounts do not have a Monthly Maintenance Fee, but instead have an Interest Rate. An Interest gets calculated and added if it has passed at least 1 year since a Savings Account was last accessed. Default value for Interest Rate is 0.0025, but may be set to any value between 0 and 0.5 during the Savings Account creation. Default value for Savings Account Minimum Balance is 1000, but may be set to any value between 100 and 1000 during Savings Account creation.
 
 The default status for newly created Account is ACTIVE, but can be later changed to FROZEN by the Admin.
 
@@ -81,10 +83,12 @@ All values to be passed as strings.
 |METHOD|ROUTE|ACTION|ACCESS
 |---|----|----|---|
 |POST|/account|Add a new account|ADMIN
+|POST|/account/savings|Add a new savings account|ADMIN
 |GET|/account|Get all accounts|ADMIN
 |GET|/account/{id}|Get an account by ID|ADMIN / ACCOUNTHOLDER*
 |GET|/account/{id}/balance|Get an account's balance|ADMIN / ACCOUNTHOLDER*
 |PUT|/account/{id}|Update an existing account|ADMIN
+|PUT|/account/savings/{id}|Update an existing savings account|ADMIN
 |PATCH|/account/{id}/status|Change an account's status|ADMIN
 |PATCH|/account/{id}/balance|Change an account's balance|ADMIN
 |DELETE|/account/{id}|Delete an existing account|ADMIN
@@ -101,6 +105,11 @@ All values to be passed as strings.
 ```primaryOwnerId``` - cannot be empty or null, must consist of at least one digit and only digits
 
 ```secondaryOwnerId``` - can be null, if present then must consist of at least one digit and only digits
+
+```minimumBalance``` (only for Savings Accounts) - can be null, if present must consist of only digits, max 12 digits in integral part and max 2 digits in fraction part of the number; values between 100 and 1000 accepted
+
+```interestRate``` (only for Savings Accounts) - can be null, if present must consist of only digits, max 1 digit in integral part and max 4 digits in fraction part of the number; values between 0 and 0.5 accepted
+
 
 ### Transaction
 |METHOD|ROUTE|ACTION|ACCESS

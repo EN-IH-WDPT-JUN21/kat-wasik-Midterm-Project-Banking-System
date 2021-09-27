@@ -2,6 +2,7 @@ package com.example.BankingSystem.service.impl;
 
 import com.example.BankingSystem.controller.dto.AccountDTO;
 import com.example.BankingSystem.controller.dto.BalanceDTO;
+import com.example.BankingSystem.controller.dto.SavingsAccountDTO;
 import com.example.BankingSystem.controller.dto.StatusDTO;
 import com.example.BankingSystem.controller.util.PasswordUtil;
 import com.example.BankingSystem.enums.Status;
@@ -36,6 +37,9 @@ public class AccountService implements IAccountService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    SavingsAccountRepository savingsAccountRepository;
+
     public Account store(AccountDTO accountDTO) {
         Account newAccount;
 
@@ -44,7 +48,7 @@ public class AccountService implements IAccountService {
         if (primaryOwner.isPresent()) {
             LocalDate birthDate = primaryOwner.get().getDateOfBirth();
             LocalDate currentDate = LocalDate.now();
-            Integer ownerAge = Period.between(birthDate, currentDate).getYears();
+            int ownerAge = Period.between(birthDate, currentDate).getYears();
             if (ownerAge < 24) {
                 newAccount = new StudentCheckingAccount();
             } else {
@@ -76,6 +80,45 @@ public class AccountService implements IAccountService {
         }
     }
 
+    public Account storeSavingsAccount(SavingsAccountDTO savingsAccountDTO) {
+        SavingsAccount newAccount = new SavingsAccount();
+
+        Integer primaryOwnerId = Integer.parseInt(savingsAccountDTO.getPrimaryOwnerId());
+        Optional<AccountHolder> primaryOwner = accountHolderRepository.findById(primaryOwnerId);
+        if (primaryOwner.isPresent()) {
+            newAccount.setPrimaryOwner(primaryOwner.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Account Holder with id " + primaryOwnerId + " does not exist.");
+        }
+
+        newAccount.setBalance(new Money(new BigDecimal(savingsAccountDTO.getBalance())));
+        newAccount.setSecretKey(PasswordUtil.encryptedPassword(savingsAccountDTO.getSecretKey()));
+
+        if (savingsAccountDTO.getMinimumBalance() != null) {
+            newAccount.setMinimumBalance(new Money(new BigDecimal(savingsAccountDTO.getMinimumBalance())));
+        }
+
+        if (savingsAccountDTO.getInterestRate() != null) {
+            newAccount.setInterestRate(new BigDecimal(savingsAccountDTO.getInterestRate()));
+        }
+
+        if (savingsAccountDTO.getSecondaryOwnerId() != null) {
+            Integer secondaryOwnerId = Integer.parseInt(savingsAccountDTO.getSecondaryOwnerId());
+            Optional<AccountHolder> secondaryOwner = accountHolderRepository.findById(secondaryOwnerId);
+            if (secondaryOwner.isPresent()) {
+                newAccount.setSecondaryOwner(secondaryOwner.get());
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Account Holder with id " + secondaryOwnerId + " does not exist.");
+            }
+        }
+
+        if (!accountRepository.findAll().contains(newAccount)) {
+            return accountRepository.save(newAccount);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This account already exists in the system.");
+        }
+    }
+
     public Account getById(Integer id, String username) {
         Optional<Account> accountOptional = accountRepository.findById(id);
 
@@ -86,9 +129,15 @@ public class AccountService implements IAccountService {
         Account account = accountOptional.get();
         User user = userRepository.findByUsername(username).get();
 
-        if (!((CheckingAccount) account).getMonthlyMaintenanceFee().equals(null)) {
-            ((CheckingAccount) account).applyMonthlyMaintenanceFee();
+        if (account.getMonthlyMaintenanceFee() != null) {
+            account.applyMonthlyMaintenanceFee();
         }
+
+        if (account.getInterestRate() != null) {
+            account.addInterestRate();
+        }
+
+        accountRepository.save(account);
 
         if (user.isAdmin() || user.isOwner(account)) {
             return account;
@@ -107,9 +156,15 @@ public class AccountService implements IAccountService {
         Account account = accountOptional.get();
         User user = userRepository.findByUsername(username).get();
 
-        if (!((CheckingAccount) account).getMonthlyMaintenanceFee().equals(null)) {
-            ((CheckingAccount) account).applyMonthlyMaintenanceFee();
+        if (account.getMonthlyMaintenanceFee() != null) {
+            account.applyMonthlyMaintenanceFee();
         }
+
+        if (account.getInterestRate() != null) {
+            account.addInterestRate();
+        }
+
+        accountRepository.save(account);
 
         if (user.isAdmin() || user.isOwner(account)) {
             return account.getBalance();
@@ -147,6 +202,46 @@ public class AccountService implements IAccountService {
 
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account account with id " + id + " does not exist.");
+        }
+    }
+
+    public void updateSavingsAccount(Integer id, SavingsAccountDTO savingsAccountDTO) {
+        Optional<SavingsAccount> storedAccount = savingsAccountRepository.findById(id);
+
+        if (storedAccount.isPresent()) {
+            storedAccount.get().setBalance(new Money(new BigDecimal(savingsAccountDTO.getBalance())));
+            storedAccount.get().setSecretKey(savingsAccountDTO.getSecretKey());
+
+            Integer primaryOwnerId = Integer.parseInt(savingsAccountDTO.getPrimaryOwnerId());
+            Optional<AccountHolder> primaryOwner = accountHolderRepository.findById(primaryOwnerId);
+            if (primaryOwner.isPresent()) {
+                storedAccount.get().setPrimaryOwner(primaryOwner.get());
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Account Holder with id " + primaryOwnerId + " does not exist.");
+            }
+
+            if (savingsAccountDTO.getSecondaryOwnerId() != null) {
+                Integer secondaryOwnerId = Integer.parseInt(savingsAccountDTO.getSecondaryOwnerId());
+                Optional<AccountHolder> secondaryOwner = accountHolderRepository.findById(secondaryOwnerId);
+                if (secondaryOwner.isPresent()) {
+                    storedAccount.get().setSecondaryOwner(secondaryOwner.get());
+                } else {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The Account Holder with id " + secondaryOwnerId + " does not exist.");
+                }
+            }
+
+            if (savingsAccountDTO.getMinimumBalance() != null) {
+                storedAccount.get().setMinimumBalance(new Money(new BigDecimal(savingsAccountDTO.getMinimumBalance())));
+            }
+
+            if (savingsAccountDTO.getInterestRate() != null) {
+                storedAccount.get().setInterestRate(new BigDecimal(savingsAccountDTO.getInterestRate()));
+            }
+
+            accountRepository.save(storedAccount.get());
+
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Savings Account with id " + id + " does not exist.");
         }
     }
 

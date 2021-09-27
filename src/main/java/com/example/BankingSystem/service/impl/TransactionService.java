@@ -58,9 +58,15 @@ public class TransactionService implements ITransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Your account is frozen.");
         }
 
-        if (!((CheckingAccount) senderAccount).getMonthlyMaintenanceFee().equals(null)) {
-            ((CheckingAccount) senderAccount).applyMonthlyMaintenanceFee();
+        if (senderAccount.getMonthlyMaintenanceFee() != null) {
+            senderAccount.applyMonthlyMaintenanceFee();
         }
+
+        if (senderAccount.getInterestRate() != null) {
+            senderAccount.addInterestRate();
+        }
+
+        accountRepository.save(senderAccount);
 
         Transaction newTransaction = new Transaction();
         newTransaction.setSenderAccount(senderAccount);

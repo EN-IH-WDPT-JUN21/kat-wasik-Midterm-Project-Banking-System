@@ -2,6 +2,7 @@ package com.example.BankingSystem.controller.impl;
 
 import com.example.BankingSystem.controller.dto.AccountDTO;
 import com.example.BankingSystem.controller.dto.BalanceDTO;
+import com.example.BankingSystem.controller.dto.SavingsAccountDTO;
 import com.example.BankingSystem.controller.dto.StatusDTO;
 import com.example.BankingSystem.controller.interfaces.IAccountController;
 import com.example.BankingSystem.model.Account;
@@ -32,6 +33,12 @@ public class AccountController implements IAccountController {
         return accountService.store(accountDTO);
     }
 
+    @PostMapping("/account/savings")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account addNewSavingsAccount(@RequestBody @Valid SavingsAccountDTO savingsAccountDTO) {
+        return accountService.storeSavingsAccount(savingsAccountDTO);
+    }
+
     // READ
     @GetMapping("/account")
     public List<Account> getAll() {
@@ -57,6 +64,12 @@ public class AccountController implements IAccountController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Integer id, @RequestBody @Valid AccountDTO accountDTO) {
         accountService.update(id, accountDTO);
+    }
+
+    @PutMapping("/account/savings/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable Integer id, @RequestBody @Valid SavingsAccountDTO savingsAccountDTO) {
+        accountService.updateSavingsAccount(id, savingsAccountDTO);
     }
 
     @PatchMapping("/account/{id}/status")
